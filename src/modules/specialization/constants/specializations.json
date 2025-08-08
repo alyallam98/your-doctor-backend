@@ -1,0 +1,188 @@
+[
+  {
+    "name": {
+      "ar": "الباطنة",
+      "en": "Internal Medicine"
+    }
+  },
+  {
+    "name": {
+      "ar": "الجراحة العامة",
+      "en": "General Surgery"
+    }
+  },
+  {
+    "name": {
+      "ar": "أمراض القلب",
+      "en": "Cardiology"
+    }
+  },
+  {
+    "name": {
+      "ar": "النساء والتوليد",
+      "en": "Obstetrics and Gynecology"
+    }
+  },
+  {
+    "name": {
+      "ar": "الأطفال",
+      "en": "Pediatrics"
+    }
+  },
+  {
+    "name": {
+      "ar": "الجلدية والتناسلية",
+      "en": "Dermatology and Venereology"
+    }
+  },
+  {
+    "name": {
+      "ar": "الأنف والأذن والحنجرة",
+      "en": "ENT"
+    }
+  },
+  {
+    "name": {
+      "ar": "العيون",
+      "en": "Ophthalmology"
+    }
+  },
+  {
+    "name": {
+      "ar": "العظام",
+      "en": "Orthopedics"
+    }
+  },
+  {
+    "name": {
+      "ar": "المخ والأعصاب",
+      "en": "Neurology"
+    }
+  },
+  {
+    "name": {
+      "ar": "المسالك البولية",
+      "en": "Urology"
+    }
+  },
+  {
+    "name": {
+      "ar": "الأسنان",
+      "en": "Dentistry"
+    }
+  },
+  {
+    "name": {
+      "ar": "الطب النفسي",
+      "en": "Psychiatry"
+    }
+  },
+  {
+    "name": {
+      "ar": "الطب الطبيعي والتأهيل",
+      "en": "Physical Medicine and Rehabilitation"
+    }
+  },
+  {
+    "name": {
+      "ar": "الأورام",
+      "en": "Oncology"
+    }
+  },
+  {
+    "name": {
+      "ar": "التحاليل الطبية",
+      "en": "Laboratory Medicine"
+    }
+  },
+  {
+    "name": {
+      "ar": "الأشعة",
+      "en": "Radiology"
+    }
+  },
+  {
+    "name": {
+      "ar": "الطوارئ",
+      "en": "Emergency Medicine"
+    }
+  },
+  {
+    "name": {
+      "ar": "الصدرية",
+      "en": "Pulmonology"
+    }
+  },
+  {
+    "name": {
+      "ar": "أمراض الدم",
+      "en": "Hematology"
+    }
+  },
+  {
+    "name": {
+      "ar": "الغدد الصماء",
+      "en": "Endocrinology"
+    }
+  },
+  {
+    "name": {
+      "ar": "الجهاز الهضمي",
+      "en": "Gastroenterology"
+    }
+  },
+  {
+    "name": {
+      "ar": "الكلى",
+      "en": "Nephrology"
+    }
+  },
+  {
+    "name": {
+      "ar": "جراحة المخ والأعصاب",
+      "en": "Neurosurgery"
+    }
+  },
+  {
+    "name": {
+      "ar": "جراحة القلب والصدر",
+      "en": "Cardiothoracic Surgery"
+    }
+  },
+  {
+    "name": {
+      "ar": "جراحة الأطفال",
+      "en": "Pediatric Surgery"
+    }
+  },
+  {
+    "name": {
+      "ar": "جراحة المسالك البولية",
+      "en": "Urologic Surgery"
+    }
+  },
+  {
+    "name": {
+      "ar": "جراحة التجميل",
+      "en": "Plastic Surgery"
+    }
+  },
+  {
+    "name": {
+      "ar": "جراحة الأوعية الدموية",
+      "en": "Vascular Surgery"
+    }
+  },
+  {
+    "name": {
+      "ar": "أمراض الشيخوخة",
+      "en": "Geriatrics"
+    }
+  },
+  {
+    "name": {
+      "ar": "التخدير والعناية المركزة",
+      "en": "Anesthesiology and ICU"
+    }
+  }
+]

@@ -1,0 +1,269 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type VerificationCode {
+  code: String!
+  expiresAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type PermissionType {
+  _id: ID!
+  name: String!
+  slug: String!
+  createdAt: String
+  updatedAt: String
+}
+
+type RoleType {
+  _id: ID!
+  name: String!
+  description: String
+  isDefault: Boolean!
+  isActive: Boolean!
+  isCanDelete: Boolean!
+  permissions: [PermissionType!]
+  usersCount: Float!
+  permissionsCount: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: String
+}
+
+type UserType {
+  _id: ID!
+  name: String!
+  email: String!
+  tokenVersion: Int!
+  profilePicture: String!
+  isVerified: Boolean!
+  verificationCode: VerificationCode!
+  isActive: Boolean!
+  deletedAt: DateTime
+  role: RoleType!
+}
+
+type RegisterResponse {
+  message: String!
+  verificationCode: String
+}
+
+type LoginResponse {
+  access_token: String!
+  refresh_token: String
+}
+
+type VerifyEmailResponse {
+  message: String!
+  success: Boolean!
+}
+
+type ChangePasswordResponse {
+  access_token: String!
+  refresh_token: String
+}
+
+type ForgotPasswordResponse {
+  message: String!
+}
+
+type ResetPasswordResponse {
+  message: String!
+}
+
+type RefreshTokenResponse {
+  access_token: String!
+}
+
+type FileType {
+  id: ID!
+  filename: String!
+  originalname: String!
+  mimetype: String!
+  size: Int!
+  url: String!
+  thumbnailUrl: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type FileUploadResponse {
+  success: Boolean!
+  file: FileType
+  message: String
+}
+
+type SpecializationType {
+  _id: ID!
+  name: String!
+  slug: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PaginationDetails {
+  currentPageItemsCount: Int!
+  total: Int!
+  itemsPerPage: Int!
+  currentPage: Int!
+  lastPage: Int!
+  hasMorePages: Boolean!
+}
+
+type ZoneType {
+  _id: ID!
+  name: String!
+  active: Boolean!
+  parentId: ZoneType
+  children: [ZoneType]!
+}
+
+type ZonePaginationResponse {
+  data: [ZoneType!]!
+  paginationDetails: PaginationDetails!
+}
+
+type Query {
+  me: UserType
+
+  """Get paginated users list"""
+  users: [UserType!]!
+
+  """Get user by ID"""
+  user(id: String!): UserType
+  roles: [RoleType!]!
+  rolesDropdown: [RoleType!]!
+  getDefaultRole: RoleType!
+  role(id: ID!): RoleType
+  permissions: [PermissionType!]!
+  permission(id: ID!): PermissionType!
+  permissionByName(name: String!): PermissionType
+  permissionsByIds(ids: [ID!]!): [PermissionType!]!
+  getUserFiles(limit: Float! = 20, offset: Float! = 0): [FileType!]!
+  specializations: [SpecializationType!]!
+  specialization(id: String!): SpecializationType
+  zones(filter: ZoneFilterInput, page: Int, limit: Int): ZonePaginationResponse!
+  zone(id: ID!): ZoneType!
+}
+
+input ZoneFilterInput {
+  name: String
+  active: Boolean
+  parentId: ID
+}
+
+type Mutation {
+  register(input: CreateUserInput!): RegisterResponse!
+  login(input: LoginInput!): LoginResponse
+  verifyEmail(input: VerifyEmailInput!): VerifyEmailResponse!
+  refreshToken: RefreshTokenResponse!
+  logout: Boolean!
+  forgotPassword(input: ForgotPasswordInput!): ForgotPasswordResponse!
+  resetPassword(input: ResetPasswordInput!): ResetPasswordResponse!
+  changePassword(input: ChangePasswordInput!): ChangePasswordResponse!
+
+  """Create new user"""
+  createUser(input: CreateUserInput!): UserType!
+
+  """Update user"""
+  updateUser(input: UpdateUserInput!, id: String!): UserType
+  createRole(input: CreateRoleInput!): RoleType!
+  updateRole(input: UpdateRoleInput!): RoleType!
+  deleteRole(id: ID!): Boolean!
+  assignPermissionsToRole(roleId: ID!, permissionIds: [ID!]!): RoleType!
+  toggleRoleActivationStatus(id: ID!, isActive: Boolean!): RoleType!
+  createPermission(input: CreatePermissionInput!): PermissionType!
+  updatePermission(id: ID!, input: UpdatePermissionInput!): PermissionType!
+  deletePermission(id: ID!): Boolean!
+  uploadFile(file: Upload!): FileUploadResponse!
+  createSpecialization(input: CreateSpecializationInput!): SpecializationType!
+  updateSpecialization(input: CreateSpecializationInput!, id: String!): SpecializationType
+  deleteSpecialization(id: String!): Boolean!
+  createZone(createZoneInput: CreateZoneInput!): ZoneType!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input VerifyEmailInput {
+  email: String!
+  code: String!
+}
+
+input ForgotPasswordInput {
+  email: String!
+}
+
+input ResetPasswordInput {
+  email: String!
+  code: String!
+  newPassword: String!
+}
+
+input ChangePasswordInput {
+  newPassword: String!
+  oldPassword: String!
+}
+
+input UpdateUserInput {
+  name: String
+  email: String
+  password: String
+}
+
+input CreateRoleInput {
+  name: String!
+  description: String
+  permissions: [String!]! = []
+  createdBy: String
+}
+
+input UpdateRoleInput {
+  name: String
+  description: String
+  permissions: [String!] = []
+  createdBy: String
+  id: ID!
+}
+
+input CreatePermissionInput {
+  name: String!
+}
+
+input UpdatePermissionInput {
+  name: String
+  resource: String
+  action: String
+  description: String
+  isActive: Boolean
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input CreateSpecializationInput {
+  name: String!
+}
+
+input CreateZoneInput {
+  name: String!
+  active: Boolean
+  parentId: ID
+}
+
+type Subscription {
+  tokenVersionUpdated: Boolean!
+}

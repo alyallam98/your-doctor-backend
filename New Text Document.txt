@@ -1,0 +1,450 @@
+import { Field, ObjectType } from '@nestjs/graphql';
+import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
+
+@ObjectType()
+export class DeviceInfo {
+  @Field()
+  @Prop({ required: true })
+  userAgent: string;
+
+  @Field()
+  @Prop({ required: true })
+  browser: string;
+
+  @Field()
+  @Prop({ required: true })
+  os: string;
+
+  @Field()
+  @Prop({ required: true })
+  device: string;
+
+  @Field({ nullable: true })
+  @Prop()
+  deviceId?: string;
+}
+
+@ObjectType()
+export class LocationInfo {
+  @Field()
+  @Prop({ required: true })
+  ip: string;
+
+  @Field({ nullable: true })
+  @Prop()
+  country?: string;
+
+  @Field({ nullable: true })
+  @Prop()
+  city?: string;
+
+  @Field({ nullable: true })
+  @Prop()
+  timezone?: string;
+
+  @Field({ nullable: true })
+  @Prop()
+  isp?: string;
+}
+
+@Schema({ timestamps: true, versionKey: false })
+@ObjectType()
+export class UserSession {
+  @Field(() => String)
+  _id: Types.ObjectId;
+
+  @Field(() => String)
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  userId: Types.ObjectId;
+
+  @Field()
+  @Prop({ required: true, unique: true })
+  sessionId: string;
+
+  @Field()
+  @Prop({ required: true })
+  refreshToken: string;
+
+  @Field(() => DeviceInfo)
+  @Prop({ type: DeviceInfo, required: true })
+  deviceInfo: DeviceInfo;
+
+  @Field(() => LocationInfo)
+  @Prop({ type: LocationInfo, required: true })
+  locationInfo: LocationInfo;
+
+  @Field()
+  @Prop({ required: true, default: true })
+  isActive: boolean;
+
+  @Field()
+  @Prop({ type: Date, required: true })
+  expiresAt: Date;
+
+  @Field()
+  @Prop({ type: Date, default: Date.now })
+  lastActivityAt: Date;
+
+  @Field({ nullable: true })
+  @Prop({ type: Date })
+  logoutAt?: Date;
+
+  @Field()
+  @Prop({ required: true, default: 'jwt' })
+  authType: string; // 'jwt', 'oauth', 'sso'
+
+  @Field({ nullable: true })
+  @Prop()
+  logoutReason?: string; // 'manual', 'expired', 'forced', 'password_change', 'account_deactivated'
+
+  @Field()
+  @Prop({ type: Date, default: Date.now })
+  createdAt: Date;
+
+  @Field()
+  @Prop({ type: Date, default: Date.now })
+  updatedAt: Date;
+}
+
+export type UserSessionDocument = UserSession & Document;
+export const UserSessionSchema = SchemaFactory.createForClass(UserSession);
+
+// Add indexes for better performance
+UserSessionSchema.index({ userId: 1, isActive: 1 });
+UserSessionSchema.index({ sessionId: 1 }, { unique: true });
+UserSessionSchema.index({ refreshToken: 1 }, { unique: true });
+UserSessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+UserSessionSchema.index({ 'locationInfo.ip': 1 });
+UserSessionSchema.index({ createdAt: -1 });
+
+export const UserSessionDBModule = MongooseModule.forFeature([
+  { name: UserSession.name, schema: UserSessionSchema },
+]);
+
+
+
+--------------------------------------------------
+--------------------------------------------------
+--------------------------------------------------
+--------------------------------------------------
+--------------------------------------------------
+
+
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
+import { UserSession, UserSessionDocument } from './schemas/user-session.schema';
+import { v4 as uuidv4 } from 'uuid';
+import * as UAParser from 'ua-parser-js';
+import { Request } from 'express';
+import { ConfigService } from '@nestjs/config';
+
+export interface CreateSessionData {
+  userId: Types.ObjectId;
+  refreshToken: string;
+  request: Request;
+  authType?: string;
+}
+
+export interface SessionInfo {
+  sessionId: string;
+  deviceInfo: {
+    userAgent: string;
+    browser: string;
+    os: string;
+    device: string;
+    deviceId?: string;
+  };
+  locationInfo: {
+    ip: string;
+    country?: string;
+    city?: string;
+    timezone?: string;
+    isp?: string;
+  };
+  isActive: boolean;
+  lastActivityAt: Date;
+  createdAt: Date;
+}
+
+@Injectable()
+export class SessionService {
+  private readonly logger = new Logger(SessionService.name);
+
+  constructor(
+    @InjectModel(UserSession.name) 
+    private readonly sessionModel: Model<UserSessionDocument>,
+    private readonly configService: ConfigService,
+  ) {}
+
+  async createSession(data: CreateSessionData): Promise<UserSessionDocument> {
+    const sessionId = uuidv4();
+    const deviceInfo = this.extractDeviceInfo(data.request);
+    const locationInfo = await this.extractLocationInfo(data.request);
+    
+    const session = new this.sessionModel({
+      userId: data.userId,
+      sessionId,
+      refreshToken: data.refreshToken,
+      deviceInfo,
+      locationInfo,
+      isActive: true,
+      authType: data.authType || 'jwt',
+      expiresAt: new Date(Date.now() + this.getRefreshTokenExpiry()),
+      lastActivityAt: new Date(),
+    });
+
+    const savedSession = await session.save();
+    
+    this.logger.log(`New session created for user ${data.userId} from ${locationInfo.ip}`);
+    
+    return savedSession;
+  }
+
+  async findActiveSessionByToken(refreshToken: string): Promise<UserSessionDocument | null> {
+    return this.sessionModel.findOne({
+      refreshToken,
+      isActive: true,
+      expiresAt: { $gt: new Date() },
+    });
+  }
+
+  async findActiveSessionById(sessionId: string): Promise<UserSessionDocument | null> {
+    return this.sessionModel.findOne({
+      sessionId,
+      isActive: true,
+      expiresAt: { $gt: new Date() },
+    });
+  }
+
+  async getUserActiveSessions(userId: Types.ObjectId): Promise<SessionInfo[]> {
+    const sessions = await this.sessionModel.find({
+      userId,
+      isActive: true,
+      expiresAt: { $gt: new Date() },
+    }).sort({ lastActivityAt: -1 });
+
+    return sessions.map(session => ({
+      sessionId: session.sessionId,
+      deviceInfo: session.deviceInfo,
+      locationInfo: session.locationInfo,
+      isActive: session.isActive,
+      lastActivityAt: session.lastActivityAt,
+      createdAt: session.createdAt,
+    }));
+  }
+
+  async updateSessionActivity(sessionId: string): Promise<void> {
+    await this.sessionModel.updateOne(
+      { sessionId, isActive: true },
+      { 
+        lastActivityAt: new Date(),
+        $inc: { version: 1 }
+      }
+    );
+  }
+
+  async updateRefreshToken(
+    sessionId: string, 
+    newRefreshToken: string
+  ): Promise<UserSessionDocument | null> {
+    return this.sessionModel.findOneAndUpdate(
+      { sessionId, isActive: true },
+      { 
+        refreshToken: newRefreshToken,
+        lastActivityAt: new Date(),
+        expiresAt: new Date(Date.now() + this.getRefreshTokenExpiry()),
+      },
+      { new: true }
+    );
+  }
+
+  async logoutSession(
+    sessionId: string, 
+    reason: string = 'manual'
+  ): Promise<boolean> {
+    const result = await this.sessionModel.updateOne(
+      { sessionId, isActive: true },
+      {
+        isActive: false,
+        logoutAt: new Date(),
+        logoutReason: reason,
+      }
+    );
+
+    return result.modifiedCount > 0;
+  }
+
+  async logoutAllUserSessions(
+    userId: Types.ObjectId, 
+    excludeSessionId?: string,
+    reason: string = 'forced'
+  ): Promise<number> {
+    const query: any = {
+      userId,
+      isActive: true,
+    };
+
+    if (excludeSessionId) {
+      query.sessionId = { $ne: excludeSessionId };
+    }
+
+    const result = await this.sessionModel.updateMany(query, {
+      isActive: false,
+      logoutAt: new Date(),
+      logoutReason: reason,
+    });
+
+    this.logger.log(`Logged out ${result.modifiedCount} sessions for user ${userId}`);
+    
+    return result.modifiedCount;
+  }
+
+  async cleanupExpiredSessions(): Promise<number> {
+    const result = await this.sessionModel.updateMany(
+      {
+        isActive: true,
+        expiresAt: { $lt: new Date() },
+      },
+      {
+        isActive: false,
+        logoutAt: new Date(),
+        logoutReason: 'expired',
+      }
+    );
+
+    if (result.modifiedCount > 0) {
+      this.logger.log(`Cleaned up ${result.modifiedCount} expired sessions`);
+    }
+
+    return result.modifiedCount;
+  }
+
+  async getSessionAnalytics(userId: Types.ObjectId): Promise<{
+    totalSessions: number;
+    activeSessions: number;
+    uniqueDevices: number;
+    uniqueLocations: number;
+    lastLoginAt: Date | null;
+  }> {
+    const [totalSessions, activeSessions, deviceStats, locationStats, lastSession] = await Promise.all([
+      this.sessionModel.countDocuments({ userId }),
+      this.sessionModel.countDocuments({ userId, isActive: true }),
+      this.sessionModel.aggregate([
+        { $match: { userId } },
+        { $group: { _id: '$deviceInfo.device' } },
+        { $count: 'uniqueDevices' }
+      ]),
+      this.sessionModel.aggregate([
+        { $match: { userId } },
+        { $group: { _id: '$locationInfo.ip' } },
+        { $count: 'uniqueLocations' }
+      ]),
+      this.sessionModel.findOne({ userId }, {}, { sort: { createdAt: -1 } })
+    ]);
+
+    return {
+      totalSessions,
+      activeSessions,
+      uniqueDevices: deviceStats[0]?.uniqueDevices || 0,
+      uniqueLocations: locationStats[0]?.uniqueLocations || 0,
+      lastLoginAt: lastSession?.createdAt || null,
+    };
+  }
+
+  async detectSuspiciousActivity(userId: Types.ObjectId): Promise<{
+    isSuspicious: boolean;
+    reasons: string[];
+  }> {
+    const reasons: string[] = [];
+    
+    // Check for multiple simultaneous sessions from different locations
+    const activeSessions = await this.sessionModel.find({
+      userId,
+      isActive: true,
+      expiresAt: { $gt: new Date() },
+    });
+
+    if (activeSessions.length > 5) {
+      reasons.push('Multiple active sessions detected');
+    }
+
+    // Check for sessions from different countries
+    const countries = new Set(
+      activeSessions
+        .map(s => s.locationInfo.country)
+        .filter(Boolean)
+    );
+
+    if (countries.size > 2) {
+      reasons.push('Sessions from multiple countries detected');
+    }
+
+    // Check for rapid login attempts
+    const recentSessions = await this.sessionModel.find({
+      userId,
+      createdAt: { $gt: new Date(Date.now() - 60 * 60 * 1000) }, // Last hour
+    });
+
+    if (recentSessions.length > 10) {
+      reasons.push('Rapid login attempts detected');
+    }
+
+    return {
+      isSuspicious: reasons.length > 0,
+      reasons,
+    };
+  }
+
+  private extractDeviceInfo(request: Request) {
+    const userAgent = request.headers['user-agent'] || '';
+    const parser = new UAParser(userAgent);
+    const result = parser.getResult();
+
+    return {
+      userAgent,
+      browser: `${result.browser.name || 'Unknown'} ${result.browser.version || ''}`.trim(),
+      os: `${result.os.name || 'Unknown'} ${result.os.version || ''}`.trim(),
+      device: result.device.type || 'desktop',
+      deviceId: request.headers['x-device-id'] as string,
+    };
+  }
+
+  private async extractLocationInfo(request: Request) {
+    const ip = this.getClientIp(request);
+    
+    // Basic IP info - in production, use a proper IP geolocation service
+    const locationInfo = {
+      ip,
+      country: request.headers['cf-ipcountry'] as string, // Cloudflare header
+      city: request.headers['cf-ipcity'] as string,
+      timezone: request.headers['cf-timezone'] as string,
+      isp: undefined,
+    };
+
+    // TODO: Integrate with IP geolocation service like MaxMind, IPinfo, etc.
+    // const geoData = await this.ipGeolocationService.lookup(ip);
+    
+    return locationInfo;
+  }
+
+  private getClientIp(request: Request): string {
+    const xForwardedFor = request.headers['x-forwarded-for'];
+    const xRealIp = request.headers['x-real-ip'];
+    const cfConnectingIp = request.headers['cf-connecting-ip'];
+    
+    if (cfConnectingIp) return cfConnectingIp as string;
+    if (xRealIp) return xRealIp as string;
+    if (xForwardedFor) {
+      const ips = (xForwardedFor as string).split(',');
+      return ips[0].trim();
+    }
+    
+    return request.connection.remoteAddress || request.socket.remoteAddress || '127.0.0.1';
+  }
+
+  private getRefreshTokenExpiry(): number {
+    return this.configService.get('refreshTokenExpiry') || 7 * 24 * 60 * 60 * 1000; // 7 days
+  }
+}
