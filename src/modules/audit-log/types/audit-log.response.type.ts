@@ -1,4 +1,4 @@
-import { PaginationDetails } from 'src/common/types/PaginationDetails.type';
+import { PaginationDetails } from 'src/common/types/paginationDetails.type';
 import { AuditLogType } from './audit-log.type';
 import { Field, ObjectType } from '@nestjs/graphql';
 
