@@ -20,20 +20,20 @@ async function bootstrap() {
     origin: 'http://localhost:5173',
     credentials: true,
   });
-  // app.useGlobalPipes(
-  //   new ValidationPipe({
-  //     whitelist: true,
-  //     forbidNonWhitelisted: true,
-  //     transform: true,
-  //     exceptionFactory: (errors) => {
-  //       const formattedErrors = errors.map((err) => ({
-  //         field: err.property,
-  //         constraints: err.constraints,
-  //       }));
-  //       return new BadRequestException(formattedErrors);
-  //     },
-  //   }),
-  // );
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      exceptionFactory: (errors) => {
+        const formattedErrors = errors.map((err) => ({
+          field: err.property,
+          constraints: err.constraints,
+        }));
+        return new BadRequestException(formattedErrors);
+      },
+    }),
+  );
   app.use(cookieParser());
   app.use(
     '/graphql',
@@ -54,8 +54,8 @@ async function bootstrap() {
 
   // const zoneSeedService = app.get(ZoneSeedService);
   // await zoneSeedService.seedDefaultZones();
-  const zoneSeedService = app.get(SpecializationSeedService);
-  await zoneSeedService.seedDefaultSpecializations();
+  // const zoneSeedService = app.get(SpecializationSeedService);
+  // await zoneSeedService.seedDefaultSpecializations();
 
   await app.listen(3000);
 }

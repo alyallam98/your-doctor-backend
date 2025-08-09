@@ -7,6 +7,7 @@ import {
   DoctorRequestDocument,
 } from './schemas/doctor-request.schema';
 import { UpdateDoctorRequestInput } from './inputs/udpate-doctor-request.input';
+import { TranslationService } from 'src/i18n/translation.service';
 
 @Injectable()
 export class DoctorRequestService {
@@ -15,23 +16,77 @@ export class DoctorRequestService {
     private readonly doctorRequestModel: Model<DoctorRequestDocument>,
   ) {}
 
-  async doctorRequests(): Promise<DoctorRequest[]> {
-    return this.doctorRequestModel.find().populate('Specialization').lean();
+  async doctorRequests(
+    page = 1,
+    limit = 20,
+    language: string,
+  ): Promise<{
+    data: DoctorRequest[];
+    paginationDetails: {
+      total: number;
+      itemsPerPage: number;
+      currentPage: number;
+      lastPage: number;
+      currentPageItemsCount: number;
+      hasMorePages: boolean;
+    };
+  }> {
+    const skip = (page - 1) * limit;
+
+    const [requests, total] = await Promise.all([
+      this.doctorRequestModel
+        .find()
+        .populate('specialization')
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec(),
+
+      this.doctorRequestModel.countDocuments().exec(),
+    ]);
+
+    const translatedRequests = requests.map((req) => ({
+      ...req,
+      specialization: TranslationService.retrieveTranslatedDocument({
+        obj: req.specialization,
+        language,
+        translatableKeys: ['name', 'slug'],
+      }),
+    }));
+
+    const lastPage = Math.ceil(total / limit);
+    const currentPage = page > lastPage ? lastPage : page;
+
+    return {
+      data: translatedRequests,
+      paginationDetails: {
+        total,
+        itemsPerPage: limit,
+        currentPage,
+        lastPage,
+        currentPageItemsCount: requests.length,
+        hasMorePages: currentPage < lastPage,
+      },
+    };
   }
 
-  async doctorRequest(id: string): Promise<DoctorRequest> {
+  async doctorRequest(id: string, language: string): Promise<DoctorRequest> {
     const doc = await this.doctorRequestModel
       .findById(id)
-      .populate('Specialization')
+      .populate('specialization')
       .lean();
+
+    doc.specialization = TranslationService.retrieveTranslatedDocument({
+      obj: doc.specialization,
+      language,
+    });
+
     return doc;
   }
 
-  async createDoctorRequest(
-    input: CreateDoctorRequestInput,
-  ): Promise<DoctorRequest> {
+  async createDoctorRequest(input: CreateDoctorRequestInput): Promise<Boolean> {
     const newDoc = await this.doctorRequestModel.create(input);
-    return newDoc;
+    return !!newDoc;
   }
 
   async updateDoctorRequest(

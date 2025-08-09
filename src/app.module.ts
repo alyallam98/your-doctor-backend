@@ -19,6 +19,8 @@ import { LocalizationModule } from './i18n/i18n.module';
 import { GraphQLError } from 'graphql';
 import { SpecializationModule } from './modules/specialization/specialization.module';
 import { ZoneModule } from './modules/zone/zone.module';
+import { DoctorRequest } from './modules/doctor-request/schemas/doctor-request.schema';
+import { DoctorRequestModule } from './modules/doctor-request/doctor-request.module';
 
 @Module({
   imports: [
@@ -77,17 +79,27 @@ import { ZoneModule } from './modules/zone/zone.module';
       },
 
       formatError: (error: GraphQLError) => {
-        const { message, extensions, path } = error;
+        const { extensions, path } = error;
+        const originalError: any = extensions?.originalError;
+
+        // This will grab what you throw from exceptionFactory in ValidationPipe
+        const validationMessages =
+          originalError?.response?.message || originalError?.message;
+
         return {
-          message: message,
+          message:
+            typeof validationMessages === 'string'
+              ? validationMessages
+              : 'Validation failed',
+          errors:
+            Array.isArray(validationMessages) && validationMessages.length > 0
+              ? validationMessages
+              : undefined,
           path,
           extensions: {
             code: extensions?.code,
             category: extensions?.category,
             status: extensions?.status,
-            stacktrace: extensions?.stacktrace,
-            // Hide stacktrace in production
-            // ...(isProd ? {} : { stacktrace: extensions?.stacktrace }),
           },
         };
       },
@@ -101,6 +113,7 @@ import { ZoneModule } from './modules/zone/zone.module';
     LocalizationModule,
     SpecializationModule,
     ZoneModule,
+    DoctorRequestModule,
   ],
   controllers: [],
   providers: [

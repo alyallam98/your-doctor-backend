@@ -1,6 +1,7 @@
 // src/modules/role/schemas/role.schema.ts
 import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, Document } from 'mongoose';
+import { Specialization } from 'src/modules/specialization/schemas/specialization.schema';
 
 export enum DoctorRequestStatus {
   PENDING = 'pending',
@@ -14,8 +15,8 @@ export class DoctorRequest {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true, type: Types.ObjectId, ref: 'specialization' })
-  Specialization: string;
+  @Prop({ required: true, type: Types.ObjectId, ref: Specialization.name })
+  specialization: string;
 
   @Prop({ required: true })
   phone: string;

@@ -128,6 +128,16 @@ type ZonePaginationResponse {
   paginationDetails: PaginationDetails!
 }
 
+type DoctorRequestType {
+  _id: ID!
+  name: String!
+  specialization: SpecializationType!
+  phone: String!
+  status: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Query {
   me: UserType
 
@@ -149,6 +159,8 @@ type Query {
   specialization(id: String!): SpecializationType
   zones(filter: ZoneFilterInput, page: Int, limit: Int): ZonePaginationResponse!
   zone(id: ID!): ZoneType!
+  doctorRequests: [DoctorRequestType!]!
+  doctorRequest(id: String!): DoctorRequestType
 }
 
 input ZoneFilterInput {
@@ -185,6 +197,9 @@ type Mutation {
   updateSpecialization(input: CreateSpecializationInput!, id: String!): SpecializationType
   deleteSpecialization(id: String!): Boolean!
   createZone(createZoneInput: CreateZoneInput!): ZoneType!
+  createDoctorRequest(input: CreateDoctorRequestInput!): Boolean!
+  updateDoctorRequest(id: String!, input: UpdateDoctorRequestInput!): Boolean!
+  deleteDoctorRequest(id: String!): Boolean!
 }
 
 input CreateUserInput {
@@ -262,6 +277,25 @@ input CreateZoneInput {
   name: String!
   active: Boolean
   parentId: ID
+}
+
+input CreateDoctorRequestInput {
+  name: String!
+  specialization: String!
+  phone: String!
+  message: String
+}
+
+input UpdateDoctorRequestInput {
+  status: DoctorRequestStatus
+}
+
+"""The status of a doctor request"""
+enum DoctorRequestStatus {
+  PENDING
+  PROCESSING
+  APPROVED
+  REJECTED
 }
 
 type Subscription {
