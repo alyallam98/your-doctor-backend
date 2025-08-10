@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module'; // Adjust the path if needed
-import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
 import { ExpressAdapter } from '@nestjs/platform-express';
+import express = require('express');
 
 let cachedServer;
 
