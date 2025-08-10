@@ -138,6 +138,11 @@ type DoctorRequestType {
   updatedAt: DateTime!
 }
 
+type DoctorRequestsResponse {
+  data: [DoctorRequestType!]!
+  paginationDetails: PaginationDetails!
+}
+
 type Query {
   me: UserType
 
@@ -159,7 +164,7 @@ type Query {
   specialization(id: String!): SpecializationType
   zones(filter: ZoneFilterInput, page: Int, limit: Int): ZonePaginationResponse!
   zone(id: ID!): ZoneType!
-  doctorRequests: [DoctorRequestType!]!
+  doctorRequests(page: Int, limit: Int): DoctorRequestsResponse!
   doctorRequest(id: String!): DoctorRequestType
 }
 

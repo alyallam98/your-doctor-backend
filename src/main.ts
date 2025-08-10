@@ -12,6 +12,8 @@ import { ZoneSeedService } from './modules/zone/zones.seed';
 import { SpecializationSeedService } from './modules/specialization/specializations.seed';
 import 'tsconfig-paths/register';
 
+console.log({ cookieParser: cookieParser() });
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // app.use(helmet());
