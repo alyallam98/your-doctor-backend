@@ -1,3 +1,14 @@
+// api/index.ts
+
+// Register TypeScript path aliases at runtime (must be first)
+require('tsconfig-paths').register({
+  baseUrl: __dirname + '/../', // resolve from dist/api/index.js
+  paths: {
+    'src/*': ['src/*'],
+    '@/*': ['src/*'],
+  },
+});
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
 import { ExpressAdapter } from '@nestjs/platform-express';
@@ -6,28 +17,18 @@ import * as cookieParser from 'cookie-parser';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { graphqlUploadExpress } from 'graphql-upload';
 
-import 'module-alias/register';
-
-// Or alternatively, you can try:
-require('tsconfig-paths').register({
-  baseUrl: '../',
-  paths: {
-    'src/*': ['src/*'],
-    '@/*': ['src/*'],
-  },
-});
-
 const server = express();
-
 let cachedServer: express.Express;
 
 async function bootstrap() {
   if (!cachedServer) {
     const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+
     app.enableCors({
-      origin: 'http://localhost:5173', // change this to your frontend URL or '*'
+      origin: 'http://localhost:5173', // change for production
       credentials: true,
     });
+
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
@@ -42,23 +43,21 @@ async function bootstrap() {
         },
       }),
     );
+
     app.use(cookieParser());
+
     app.use(
       '/graphql',
       graphqlUploadExpress({
-        maxFileSize: 10 * 1024 * 1024, // 10MB
+        maxFileSize: 10 * 1024 * 1024, // 10 MB
         maxFiles: 5,
       }),
     );
 
-    // If you want to seed data on every cold start (optional)
-    // const permissionSeedService = app.get(PermissionSeedService);
-    // await permissionSeedService.seedDefaultPermissions();
-    // ...
-
     await app.init();
     cachedServer = server;
   }
+
   return cachedServer;
 }
 

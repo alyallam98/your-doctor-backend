@@ -10,6 +10,7 @@ import { graphqlUploadExpress } from 'graphql-upload';
 import { GraphqlValidationExceptionFilter } from './common/filters/graphql-validation-exception.filter';
 import { ZoneSeedService } from './modules/zone/zones.seed';
 import { SpecializationSeedService } from './modules/specialization/specializations.seed';
+import 'tsconfig-paths/register';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
