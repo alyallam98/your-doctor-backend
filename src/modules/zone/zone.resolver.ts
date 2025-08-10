@@ -10,7 +10,7 @@ import {
 import { ZoneService } from './zone.service';
 import { Zone, ZoneDocument } from './schemas/zone.schema';
 import { CreateZoneInput } from './inputs/zone.input';
-import { Language } from 'src/common/decorators/language.decorator';
+import { Language } from '../../common/decorators/language.decorator';
 import { ZoneFilterInput } from './inputs/zone-filter.input';
 import { ZonePaginationResponse } from './types/zone-pagination-response.type';
 import { ZoneType } from './types/zone.type';

@@ -1,7 +1,6 @@
-// src/modules/role/schemas/role.schema.ts
 import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, Document } from 'mongoose';
-import { Specialization } from 'src/modules/specialization/schemas/specialization.schema';
+import { Specialization } from '../../../modules/specialization/schemas/specialization.schema';
 
 export enum DoctorRequestStatus {
   PENDING = 'pending',

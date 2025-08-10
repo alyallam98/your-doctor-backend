@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SpecializationService } from './specialization.service';
 import { SpecializationResolver } from './specialization.resolver';
-import { LocalizationModule } from 'src/i18n/i18n.module';
+import { LocalizationModule } from '../../i18n/i18n.module';
 import { SpecializationSeedService } from './specializations.seed';
 import { specializationDBModel } from './schemas/specialization.schema';
 

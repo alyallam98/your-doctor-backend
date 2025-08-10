@@ -1,7 +1,6 @@
-// src/modules/role/schemas/role.schema.ts
 import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, Document } from 'mongoose';
-import { Permission } from 'src/modules/permission/schemas/permission.schema';
+import { Permission } from '../../../modules/permission/schemas/permission.schema';
 
 @Schema({ timestamps: true, versionKey: false })
 export class Role {

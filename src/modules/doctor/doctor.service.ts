@@ -10,7 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { UpdateDoctorInput } from './inputs/update-doctor.Input';
 
 import { ConfigService } from '@nestjs/config';
-import { UserStatus } from 'src/common/enums/user-status.enum';
+import { UserStatus } from '../../common/enums/user-status.enum';
 import { RoleService } from '../role/role.service';
 import { Doctor } from './schemas/doctor.schema';
 import { CreateDoctorInput } from './inputs/create-doctor.Input';

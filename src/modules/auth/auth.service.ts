@@ -7,8 +7,8 @@ import { RegisterInput } from './inputs/registerInput';
 import { EmailService } from '../../common/email/email.service';
 import { ConfigService } from '@nestjs/config';
 import { GraphQLError } from 'graphql';
-import { ERROR_CODES } from 'src/common/constants/errorsCodes';
-import { ERROR_MESSAGES } from 'src/common/constants/errorMessages';
+import { ERROR_CODES } from '../../common/constants/errorsCodes';
+import { ERROR_MESSAGES } from '../../common/constants/errorMessages';
 import { VerifyEmailInput } from './inputs/verifyEmail.input';
 
 import { PubSub } from 'graphql-subscriptions';

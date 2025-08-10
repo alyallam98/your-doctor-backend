@@ -10,10 +10,10 @@ import {
   SpecializationDocument,
 } from './schemas/specialization.schema';
 import { CreateSpecializationInput } from './inputs/create-specialization.input';
-import { SlugService } from 'src/common/slug/slug.service';
-import { TranslationService } from 'src/i18n/translation.service';
+import { SlugService } from '../../common/slug/slug.service';
+import { TranslationService } from '../../i18n/translation.service';
 import { GraphQLError } from 'graphql';
-import { I18nService } from 'src/i18n/i18n.service';
+import { I18nService } from '../../i18n/i18n.service';
 
 @Injectable()
 export class SpecializationService {

@@ -4,9 +4,9 @@ import { DoctorRequestService } from './doctor-request.service';
 import { DoctorRequestType } from './types/doctor-request.type';
 import { UpdateDoctorRequestInput } from './inputs/udpate-doctor-request.input';
 import { UseGuards } from '@nestjs/common';
-import { GqlThrottlerGuard } from 'src/common/guards/GqlThrottlerGuard';
+import { GqlThrottlerGuard } from '../../common/guards/GqlThrottlerGuard';
 import { IsMongoId } from 'class-validator';
-import { Language } from 'src/common/decorators/language.decorator';
+import { Language } from '../../common/decorators/language.decorator';
 import { DoctorRequestsResponse } from './types/doctor.requests-response.type';
 
 @Resolver()

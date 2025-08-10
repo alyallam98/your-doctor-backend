@@ -6,7 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { EmailModule } from '../../common/email/email.module';
 import { UserModule } from '../user/user.module';
-import { OtpModule } from 'src/common/otp.module';
+import { OtpModule } from '../../common/otp.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { RoleModule } from '../role/role.module';

@@ -7,7 +7,7 @@ import {
   Specialization,
   SpecializationDocument,
 } from './schemas/specialization.schema';
-import { SlugService } from 'src/common/slug/slug.service';
+import { SlugService } from '../../common/slug/slug.service';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()

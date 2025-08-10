@@ -8,9 +8,9 @@ import { Model, Types } from 'mongoose';
 import { Zone } from './schemas/zone.schema';
 import { CreateZoneInput } from './inputs/zone.input';
 import { GraphQLError } from 'graphql';
-import { I18nService } from 'src/i18n/i18n.service';
-import { SlugService } from 'src/common/slug/slug.service';
-import { TranslationService } from 'src/i18n/translation.service';
+import { I18nService } from '../../i18n/i18n.service';
+import { SlugService } from '../../common/slug/slug.service';
+import { TranslationService } from '../../i18n/translation.service';
 import { ZoneFilterInput } from './inputs/zone-filter.input';
 import { ZonePaginationResponse } from './types/zone-pagination-response.type';
 

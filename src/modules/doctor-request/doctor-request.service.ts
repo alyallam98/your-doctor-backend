@@ -7,7 +7,7 @@ import {
   DoctorRequestDocument,
 } from './schemas/doctor-request.schema';
 import { UpdateDoctorRequestInput } from './inputs/udpate-doctor-request.input';
-import { TranslationService } from 'src/i18n/translation.service';
+import { TranslationService } from '../../i18n/translation.service';
 
 @Injectable()
 export class DoctorRequestService {

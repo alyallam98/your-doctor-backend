@@ -14,7 +14,7 @@ import { UpdateUserInput } from './inputs/update-user.Input';
 
 import { ConfigService } from '@nestjs/config';
 import { CreateUserInput } from './inputs/ceate-user.Input';
-import { UserStatus } from 'src/common/enums/user-status.enum';
+import { UserStatus } from '../../common/enums/user-status.enum';
 import { RoleService } from '../role/role.service';
 import { OtpService } from '../../common/otp.service';
 

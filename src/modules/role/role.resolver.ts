@@ -4,12 +4,12 @@ import { RoleService } from './role.service';
 import { CreateRoleInput } from './inputs/create-role.input';
 import { UpdateRoleInput } from './inputs/update-role.input';
 import { UseGuards } from '@nestjs/common';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { RoleType } from './types/role.type';
 import { PermissionsGuard } from 'src/common/guards/permissions.guard';
-import { PermissionsDecorator } from 'src/common/decorators/permissions.decorator';
+import { PermissionsDecorator } from '../../common/decorators/permissions.decorator';
 
 @UseGuards(GqlAuthGuard, RolesGuard, PermissionsGuard)
 @Resolver(() => RoleType)

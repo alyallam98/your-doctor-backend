@@ -2,7 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { SpecializationService } from './specialization.service';
 import { CreateSpecializationInput } from './inputs/create-specialization.input';
 import { SpecializationType } from './types/specializationtype';
-import { Language } from 'src/common/decorators/language.decorator';
+import { Language } from '../../common/decorators/language.decorator';
 
 @Resolver()
 export class SpecializationResolver {

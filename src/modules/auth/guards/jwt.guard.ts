@@ -4,9 +4,9 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { GraphQLError } from 'graphql';
-import { ERROR_MESSAGES } from 'src/common/constants/errorMessages';
-import { ERROR_CODES } from 'src/common/constants/errorsCodes';
-import { UserService } from 'src/modules/user/user.service';
+import { ERROR_MESSAGES } from '../../../common/constants/errorMessages';
+import { ERROR_CODES } from '../../../common/constants/errorsCodes';
+import { UserService } from '../../../modules/user/user.service';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {

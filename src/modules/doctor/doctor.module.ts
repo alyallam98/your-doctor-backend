@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
 import { DoctorResolver } from './doctor.resolver';
 import { doctorDBModule } from './schemas/doctor.schema';
-import { CommonModule } from 'src/common/common.module';
+import { CommonModule } from '../../common/common.module';
 import { RoleModule } from '../role/role.module';
 
 @Module({

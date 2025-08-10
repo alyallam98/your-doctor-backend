@@ -4,7 +4,7 @@ import { DoctorRequestService } from './doctor-request.service';
 import { doctorRequestDBModule } from './schemas/doctor-request.schema';
 import { DoctorRequestResolver } from './doctor-request.resolver';
 import { APP_GUARD } from '@nestjs/core';
-import { GqlThrottlerGuard } from 'src/common/guards/GqlThrottlerGuard';
+import { GqlThrottlerGuard } from '../../common/guards/GqlThrottlerGuard';
 
 @Module({
   imports: [

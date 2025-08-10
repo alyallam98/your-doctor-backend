@@ -1,6 +1,6 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { Types } from 'mongoose';
-import { PermissionType } from 'src/modules/permission/types/permission.type';
+import { PermissionType } from '../../../modules/permission/types/permission.type';
 
 @ObjectType()
 export class RoleType {

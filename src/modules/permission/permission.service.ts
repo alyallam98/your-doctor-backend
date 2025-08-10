@@ -9,7 +9,7 @@ import { Model, Types } from 'mongoose';
 import { Permission, PermissionDocument } from './schemas/permission.schema';
 import { CreatePermissionInput } from './inputs/create-permission.Input';
 import { UpdatePermissionInput } from './inputs/update-permission.Input';
-import { SlugService } from 'src/common/slug/slug.service';
+import { SlugService } from '../../common/slug/slug.service';
 
 export interface PermissionFilter {
   resource?: string;

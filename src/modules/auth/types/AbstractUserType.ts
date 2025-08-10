@@ -1,5 +1,5 @@
 import { Field, ID, InterfaceType, ObjectType } from '@nestjs/graphql';
-import { RoleType } from 'src/modules/role/types/role.type';
+import { RoleType } from '../../../modules/role/types/role.type';
 
 @InterfaceType()
 export abstract class AbstractUserType {

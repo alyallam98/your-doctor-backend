@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
-import { EmailService } from 'src/common/email/email.service';
+import { EmailService } from '../../common/email/email.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ChangePasswordInput } from './inputs/ChangePassword.input';
 import * as bcrypt from 'bcrypt';
 import { GraphQLError } from 'graphql';
-import { ERROR_CODES } from 'src/common/constants/errorsCodes';
+import { ERROR_CODES } from '../../common/constants/errorsCodes';
 import { PubSub } from 'graphql-subscriptions';
 import { ForgotPasswordInput } from './inputs/forgotPassword.input';
 import { ResetPasswordInput } from './inputs/resetPassword.input';

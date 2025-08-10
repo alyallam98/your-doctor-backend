@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { User } from 'src/modules/user/schemas/user.schema';
+import { User } from '../modules/user/schemas/user.schema';
 
 declare global {
   namespace Express {

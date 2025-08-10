@@ -1,6 +1,6 @@
 import { Field, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { VerificationCode } from '../schemas/user.schema';
-import { RoleType } from 'src/modules/role/types/role.type';
+import { RoleType } from '../../../modules/role/types/role.type';
 
 @ObjectType()
 export class UserType {

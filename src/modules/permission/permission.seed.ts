@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from './permission.service';
-import { PERMISSIONS } from 'src/common/constants/permissions';
+import { PERMISSIONS } from '../../common/constants/permissions';
 
 @Injectable()
 export class PermissionSeedService {

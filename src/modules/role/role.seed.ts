@@ -1,10 +1,9 @@
-// src/modules/role/role.seed.ts
 import { Injectable, Logger } from '@nestjs/common';
 import { RoleService } from './role.service';
 import {
   PERMISSIONS,
   PERMISSIONS_CODES,
-} from 'src/common/constants/permissions';
+} from '../../common/constants/permissions';
 import { PermissionService } from '../permission/permission.service';
 
 @Injectable()
