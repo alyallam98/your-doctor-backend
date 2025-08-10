@@ -12,8 +12,8 @@ require('tsconfig-paths').register({
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import * as express from 'express';
-import * as cookieParser from 'cookie-parser';
+import express from 'express';
+import cookieParser from 'cookie-parser';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { graphqlUploadExpress } from 'graphql-upload';
 
