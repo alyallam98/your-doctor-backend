@@ -1,8 +1,13 @@
-// file-storage.service.ts
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { createReadStream, createWriteStream, existsSync, mkdirSync } from 'fs';
+import {
+  createReadStream,
+  createWriteStream,
+  existsSync,
+  mkdirSync,
+  statSync,
+} from 'fs';
 import { join } from 'path';
 import { createHash } from 'crypto';
 import * as sharp from 'sharp';
@@ -10,7 +15,10 @@ import { File } from './schemas/file.schema';
 
 @Injectable()
 export class FileStorageService {
-  private readonly uploadPath = 'uploads';
+  // Use environment variable or fallback to /tmp/uploads (writable on Vercel)
+  private readonly uploadPath =
+    process.env.UPLOAD_DIR || join('/tmp', 'uploads');
+
   private readonly maxFileSize = 50 * 1024 * 1024; // 50MB
   private readonly allowedMimeTypes = [
     'image/jpeg',
@@ -36,8 +44,8 @@ export class FileStorageService {
   async uploadFile(fileUpload: any, userId: string): Promise<File> {
     const { createReadStream, filename, mimetype } = await fileUpload;
 
-    // Validate file
-    // this.validateFile(filename, mimetype);
+    // Validate file type
+    this.validateFile(filename, mimetype);
 
     // Generate unique filename
     const timestamp = Date.now();
@@ -45,18 +53,19 @@ export class FileStorageService {
     const uniqueFilename = `${timestamp}_${sanitizedName}`;
     const filepath = join(this.uploadPath, uniqueFilename);
 
-    // Stream file to disk with hash calculation
+    // Stream file to disk while computing hash
     const hash = await this.saveFileWithHash(createReadStream(), filepath);
 
-    // Check for duplicates
+    // Check for duplicate file by hash
     const existingFile = await this.findByHash(hash);
     if (existingFile) {
       return existingFile;
     }
 
-    const stats = require('fs').statSync(filepath);
+    // Get file stats for size
+    const stats = statSync(filepath);
 
-    // Create file document
+    // Create and save file document in DB
     const fileDoc = new this.fileModel({
       filename: uniqueFilename,
       originalname: filename,
@@ -69,7 +78,7 @@ export class FileStorageService {
 
     const savedFile = await fileDoc.save();
 
-    // Process file asynchronously for optimizations
+    // Asynchronously process the file (image variants, metadata)
     this.processFileAsync(savedFile);
 
     return savedFile;
@@ -93,15 +102,12 @@ export class FileStorageService {
 
   private async processFileAsync(file: File) {
     try {
-      // Generate image variants for images
       if (file.mimetype.startsWith('image/')) {
         await this.generateImageVariants(file);
       }
 
-      // Extract metadata
       const metadata = await this.extractMetadata(file);
 
-      // Update file document
       await this.fileModel.findByIdAndUpdate(file._id, {
         variants: file.variants,
         metadata,
@@ -119,7 +125,7 @@ export class FileStorageService {
       mkdirSync(baseDir, { recursive: true });
     }
 
-    const variants = {};
+    const variants: Record<string, string> = {};
     const sizes = {
       thumbnail: { width: 150, height: 150 },
       medium: { width: 500, height: 500 },
@@ -166,7 +172,6 @@ export class FileStorageService {
   }
 
   private async extractMetadata(file: File): Promise<Record<string, any>> {
-    // Implement metadata extraction based on file type
     const metadata: any = {
       extractedAt: new Date(),
     };
