@@ -18,7 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "postinstall": "npm rebuild sharp"
+    "postinstall": "npm rebuild sharp",
+    "install": "npm install --platform=linux --arch=x64 sharp || npm install"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
