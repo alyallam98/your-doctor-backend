@@ -7,7 +7,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import * as bcrypt from 'bcrypt';
-import { OtpService } from 'src/common/otp.service';
 import { UpdateDoctorInput } from './inputs/update-doctor.Input';
 
 import { ConfigService } from '@nestjs/config';
@@ -15,6 +14,7 @@ import { UserStatus } from 'src/common/enums/user-status.enum';
 import { RoleService } from '../role/role.service';
 import { Doctor } from './schemas/doctor.schema';
 import { CreateDoctorInput } from './inputs/create-doctor.Input';
+import { OtpService } from '../../common/otp.service';
 
 @Injectable()
 export class DoctorService {

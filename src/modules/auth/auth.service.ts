@@ -5,7 +5,6 @@ import * as bcrypt from 'bcrypt';
 import { LoginInput } from './inputs/loginInput';
 import { RegisterInput } from './inputs/registerInput';
 import { EmailService } from '../../common/email/email.service';
-import { OtpService } from 'src/common/otp.service';
 import { ConfigService } from '@nestjs/config';
 import { GraphQLError } from 'graphql';
 import { ERROR_CODES } from 'src/common/constants/errorsCodes';
@@ -15,6 +14,7 @@ import { VerifyEmailInput } from './inputs/verifyEmail.input';
 import { PubSub } from 'graphql-subscriptions';
 
 import { CreateUserInput } from '../user/inputs/ceate-user.Input';
+import { OtpService } from '../../common/otp.service';
 const pubSub = new PubSub();
 
 @Injectable()

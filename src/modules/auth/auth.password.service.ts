@@ -3,7 +3,6 @@ import { UserService } from '../user/user.service';
 import { EmailService } from 'src/common/email/email.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { OtpService } from 'src/common/otp.service';
 import { ChangePasswordInput } from './inputs/ChangePassword.input';
 import * as bcrypt from 'bcrypt';
 import { GraphQLError } from 'graphql';
@@ -11,6 +10,7 @@ import { ERROR_CODES } from 'src/common/constants/errorsCodes';
 import { PubSub } from 'graphql-subscriptions';
 import { ForgotPasswordInput } from './inputs/forgotPassword.input';
 import { ResetPasswordInput } from './inputs/resetPassword.input';
+import { OtpService } from '../../common/otp.service';
 
 const pubSub = new PubSub();
 

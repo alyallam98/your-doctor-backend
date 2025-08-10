@@ -9,7 +9,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import * as bcrypt from 'bcrypt';
-import { OtpService } from 'src/common/otp.service';
 import { User, UserDocument } from './schemas/user.schema';
 import { UpdateUserInput } from './inputs/update-user.Input';
 
@@ -17,6 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { CreateUserInput } from './inputs/ceate-user.Input';
 import { UserStatus } from 'src/common/enums/user-status.enum';
 import { RoleService } from '../role/role.service';
+import { OtpService } from '../../common/otp.service';
 
 @Injectable()
 export class UserService {
