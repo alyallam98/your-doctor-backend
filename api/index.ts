@@ -6,6 +6,17 @@ import * as cookieParser from 'cookie-parser';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { graphqlUploadExpress } from 'graphql-upload';
 
+import 'module-alias/register';
+
+// Or alternatively, you can try:
+require('tsconfig-paths').register({
+  baseUrl: '../',
+  paths: {
+    'src/*': ['src/*'],
+    '@/*': ['src/*'],
+  },
+});
+
 const server = express();
 
 let cachedServer: express.Express;
