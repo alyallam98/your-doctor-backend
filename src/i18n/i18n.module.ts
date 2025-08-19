@@ -17,14 +17,18 @@ import { TranslationService } from './translation.service';
       useFactory: (configService: ConfigService) => ({
         fallbackLanguage: configService.get('FALLBACK_LANGUAGE', 'en'),
         loaderOptions: {
-          path: join(__dirname, './locales/'), // Adjust path as needed
-          watch: true, // Enable live reloading in development
+          path:
+            configService.get('NODE_ENV') === 'production'
+              ? join(process.cwd(), 'dist/i18n/locales') // built files
+              : join(process.cwd(), 'src/i18n/locales'), // dev source files
+          watch: configService.get('NODE_ENV') !== 'production',
         },
+
         typesOutputPath: join(
           process.cwd(),
           'src/i18n/generated/i18n.generated.ts',
         ),
-        throwOnMissingKey: process.env.NODE_ENV === 'development', // Throw in dev only
+        throwOnMissingKey: configService.get('NODE_ENV') === 'development', // Throw in dev only
       }),
       resolvers: [
         new HeaderResolver(['x-lang']),

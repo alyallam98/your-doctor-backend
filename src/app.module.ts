@@ -109,7 +109,7 @@ import { DoctorRequestModule } from './modules/doctor-request/doctor-request.mod
     EmailModule,
     RoleModule,
     PermissionModule,
-    FileModule,
+    // FileModule,
     LocalizationModule,
     SpecializationModule,
     ZoneModule,

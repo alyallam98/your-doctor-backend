@@ -80,24 +80,6 @@ type RefreshTokenResponse {
   access_token: String!
 }
 
-type FileType {
-  id: ID!
-  filename: String!
-  originalname: String!
-  mimetype: String!
-  size: Int!
-  url: String!
-  thumbnailUrl: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type FileUploadResponse {
-  success: Boolean!
-  file: FileType
-  message: String
-}
-
 type SpecializationType {
   _id: ID!
   name: String!
@@ -159,7 +141,6 @@ type Query {
   permission(id: ID!): PermissionType!
   permissionByName(name: String!): PermissionType
   permissionsByIds(ids: [ID!]!): [PermissionType!]!
-  getUserFiles(limit: Float! = 20, offset: Float! = 0): [FileType!]!
   specializations: [SpecializationType!]!
   specialization(id: String!): SpecializationType
   zones(filter: ZoneFilterInput, page: Int, limit: Int): ZonePaginationResponse!
@@ -197,7 +178,6 @@ type Mutation {
   createPermission(input: CreatePermissionInput!): PermissionType!
   updatePermission(id: ID!, input: UpdatePermissionInput!): PermissionType!
   deletePermission(id: ID!): Boolean!
-  uploadFile(file: Upload!): FileUploadResponse!
   createSpecialization(input: CreateSpecializationInput!): SpecializationType!
   updateSpecialization(input: CreateSpecializationInput!, id: String!): SpecializationType
   deleteSpecialization(id: String!): Boolean!
@@ -270,9 +250,6 @@ input UpdatePermissionInput {
   description: String
   isActive: Boolean
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 input CreateSpecializationInput {
   name: String!
